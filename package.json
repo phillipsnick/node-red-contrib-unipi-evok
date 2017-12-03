@@ -19,7 +19,8 @@
   "author": "Nick Phillips",
   "node-red": {
     "nodes": {
-      "node-unipi": "lib/unipi.js"
+      "node-unipi": "lib/unipi.js",
+      "node-unipi-api": "lib/unipi-api.js"
     }
   },
   "license": "MIT",

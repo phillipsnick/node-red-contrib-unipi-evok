@@ -1,0 +1,55 @@
+<script type="text/javascript">
+    RED.nodes.registerType('unipi', {
+        category: 'config',
+        defaults: {
+            name: {
+                value: ''
+            },
+            host: {
+                value: '',
+                required: true
+            },
+            restPort: {
+                value: 80,
+                required: true
+            },
+            wsPort: {
+                value: 8080,
+                required: true
+            }
+        },
+        label: function () {
+            return this.name || 'unipi';
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="unipi">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-host"><i class="fa fa-globe"></i> Host</label>
+        <input type="text" id="node-config-input-host" style="width: 100%;">
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-restPort"><i class="fa fa-sign-in"></i> REST Port</label>
+        <input type="text" id="node-config-input-restPort">
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-wsPort"><i class="fa fa-sign-in"></i> WS Port</label>
+        <input type="text" id="node-config-input-wsPort">
+    </div>
+
+    <div class="form-tips">
+        <p>TODO.</p>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="unipi">
+    <p>Some helping stuff tood!</p>
+</script>
