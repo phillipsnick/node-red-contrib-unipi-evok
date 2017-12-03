@@ -1,0 +1,33 @@
+{
+  "name": "node-red-contrib-unipi-evok",
+  "version": "0.0.1",
+  "description": "UniPi EVOK node for Node-RED",
+  "main": "lib/api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phillipsnick/node-red-contrib-unipi-evok.git"
+  },
+  "keywords": [
+    "unipi",
+    "evok",
+    "neuron",
+    "node-red"
+  ],
+  "author": "Nick Phillips",
+  "node-red": {
+    "nodes": {
+      "node-unipi": "lib/unipi.js"
+    }
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/phillipsnick/node-red-contrib-unipi-evok/issues"
+  },
+  "homepage": "https://github.com/phillipsnick/node-red-contrib-unipi-evok#readme",
+  "dependencies": {
+    "unipi-evok": "0.0.1"
+  }
+}
