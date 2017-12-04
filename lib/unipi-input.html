@@ -1,6 +1,6 @@
 <script type="text/javascript">
-    RED.nodes.registerType('unipi-api', {
-        category: 'function',
+    RED.nodes.registerType('unipi-input', {
+        category: 'input',
         color: '#3ea4eb',
         icon: 'bridge.png',
         defaults: {
@@ -13,15 +13,18 @@
                 required: false
             }
         },
-        inputs: 1,
         outputs: 1,
+//        align: 'right',
         label: function () {
-            return this.name || 'unipi api';
+            return this.name || 'unipi input';
+        },
+        oneditprepare: function() {
+
         }
     });
 </script>
 
-<script type="text/x-red" data-template-name="unipi-api">
+<script type="text/x-red" data-template-name="unipi-input">
   <div class="form-row">
     <label for="node-input-unipi"><i class="fa fa-globe"></i> UniPi</label>
     <input type="text" id="node-input-unipi">
@@ -40,6 +43,6 @@
 
 </script>
 
-<script type="text/x-red" data-help-name="unpi-api">
+<script type="text/x-red" data-help-name="unpi-input">
   <p>TODO</p>
 </script>
