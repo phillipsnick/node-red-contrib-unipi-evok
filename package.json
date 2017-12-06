@@ -21,7 +21,8 @@
     "nodes": {
       "node-unipi": "lib/unipi.js",
       "node-unipi-api": "lib/unipi-api.js",
-      "node-unipi-input": "lib/unipi-input.js"
+      "node-unipi-input": "lib/unipi-input.js",
+      "node-unipi-output": "lib/unipi-output.js"
     }
   },
   "license": "MIT",

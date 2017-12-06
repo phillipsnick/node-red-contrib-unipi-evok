@@ -1,0 +1,127 @@
+<script type="text/javascript">
+    RED.nodes.registerType('unipi-output', {
+        category: 'output',
+        color: '#3ea4eb',
+        icon: 'bridge.png',
+        defaults: {
+            unipi: {
+                type: 'unipi',
+                required: true
+            },
+            output: {
+                value: 'relay',
+                required: true
+            },
+            circuit: {
+                value: '',
+                required: true
+            },
+            name: {
+                value: '',
+                required: false
+            }
+        },
+        inputs: 1,
+        align: 'right',
+        label: function () {
+            return this.name || 'unipi output';
+        },
+        oneditprepare: function () {
+            var unipi = $('#node-input-unipi');
+            var filter = $('#node-input-filter');
+            var circuit = $('#node-input-circuit');
+
+            unipi.on('change', fetchOutputs);
+            filter.on('change', fetchOutputs);
+
+            function fetchOutputs() {
+                circuit.empty().prop('disabled', true);
+
+                var node = RED.nodes.node(unipi.val());
+
+                if (!node) {
+                    filter.prop('disabled', true);
+                    return;
+                }
+                //TODO: its not selecting the output on editing
+
+                filter.prop('disabled', false);
+                circuit.html('').prop('disabled', true);
+
+                if (!filter.val()) {
+                    filter.val('relay');
+                }
+
+                $.getJSON('/unipi/outputs', {
+                    unipi: unipi.val(),
+                    filter: filter.val()
+                })
+                    .done(function (res) {
+                        if (!res.length) {
+                            RED.notify('No outputs of this type available.', 'error');
+                            return;
+                        }
+
+                        circuit
+                            .prop('disabled', false)
+                            .append($('<option></option>'))
+
+                        res.forEach(function (relay) {
+                            var name = relay.circuit;
+
+                            if (relay.alias) {
+                                name += ' - ' + relay.alias.substr(3);
+                            }
+
+                            circuit.append(
+                                $('<option></option>')
+                                    .attr('value', relay.circuit)
+                                    .text(name)
+                            );
+                        });
+                    })
+                    .fail(function () {
+                        RED.notify('Failed to fetch available outputs. Please try again.', 'error');
+                    })
+            }
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="unipi-output">
+    <div class="form-row">
+        <label for="node-input-unipi"><i class="fa fa-globe"></i> UniPi</label>
+        <input type="text" id="node-input-unipi">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-filter"><i class="fa fa-filter"></i> Type</label>
+        <select id="node-input-filter" style="width: 70%">
+            <option value="relay" selected>Relay</option>
+            <option value="digital">Digital</option>
+            <option value="analogue">Analogue</option>
+            <option value="led">LED</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-circuit"><i class="fa fa-tasks"></i> Output</label>
+        <select id="node-input-circuit" style="width: 70%" disabled></select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-tips">
+        <span id="method-usage">
+            TODO
+        </span>
+    </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="unpi-output">
+  <p>TODO</p>
+</script>
