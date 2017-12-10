@@ -27,12 +27,15 @@
             return this.name || 'unipi output';
         },
         oneditprepare: function () {
+            var config = this;
             var unipi = $('#node-input-unipi');
-            var filter = $('#node-input-filter');
+            var output = $('#node-input-output');
             var circuit = $('#node-input-circuit');
 
             unipi.on('change', fetchOutputs);
-            filter.on('change', fetchOutputs);
+            output.on('change', fetchOutputs);
+
+            output.val(config.output)
 
             function fetchOutputs() {
                 circuit.empty().prop('disabled', true);
@@ -40,21 +43,21 @@
                 var node = RED.nodes.node(unipi.val());
 
                 if (!node) {
-                    filter.prop('disabled', true);
+                    output.prop('disabled', true);
                     return;
                 }
                 //TODO: its not selecting the output on editing #1
 
-                filter.prop('disabled', false);
+                output.prop('disabled', false);
                 circuit.html('').prop('disabled', true);
 
-                if (!filter.val()) {
-                    filter.val('relay');
+                if (!output.val()) {
+                    output.val('relay');
                 }
 
                 $.getJSON('/unipi/outputs', {
                     unipi: unipi.val(),
-                    filter: filter.val()
+                    output: output.val()
                 })
                     .done(function (res) {
                         if (!res.length) {
@@ -78,6 +81,8 @@
                                     .attr('value', relay.circuit)
                                     .text(name)
                             );
+
+                            circuit.val(config.circuit)
                         });
                     })
                     .fail(function () {
@@ -95,11 +100,11 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-filter"><i class="fa fa-filter"></i> Type</label>
-        <select id="node-input-filter" style="width: 70%">
+        <label for="node-input-output"><i class="fa fa-filter"></i> Type</label>
+        <select id="node-input-output" style="width: 70%">
             <option value="relay" selected>Relay</option>
-            <option value="digital">Digital</option>
-            <option value="analogue">Analogue</option>
+            <option value="digitalOutput">Digital</option>
+            <option value="analogueOutput">Analogue</option>
             <option value="led">LED</option>
         </select>
     </div>
