@@ -1,4 +1,6 @@
 <script type="text/javascript">
+    var defaultOutput = 'relay'
+
     RED.nodes.registerType('unipi-output', {
         category: 'output',
         color: '#3ea4eb',
@@ -9,7 +11,7 @@
                 required: true
             },
             output: {
-                value: 'relay',
+                value: defaultOutput,
                 required: true
             },
             circuit: {
@@ -51,7 +53,7 @@
                 circuit.html('').prop('disabled', true);
 
                 if (!output.val()) {
-                    output.val('relay');
+                    output.val(defaultOutput);
                 }
 
                 $.getJSON('/unipi/outputs', {

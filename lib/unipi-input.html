@@ -1,12 +1,33 @@
 <script type="text/javascript">
+    var defaultInput = 'input';
+
     RED.nodes.registerType('unipi-input', {
         category: 'input',
         color: '#3ea4eb',
         icon: 'bridge.png',
         defaults: {
+            // hidden input for press/hold outputs
+            outputs: {
+                value: 1
+            },
             unipi: {
                 type: 'unipi',
                 required: true
+            },
+            input: {
+                value: defaultInput,
+                required: true
+            },
+            circuit: {
+                value: '',
+                required: true
+            },
+            button: {
+                value: 0
+            },
+            hold: {
+                value: '500',
+                required: false
             },
             name: {
                 value: '',
@@ -14,20 +35,139 @@
             }
         },
         outputs: 1,
-//        align: 'right',
+        align: 'left',
         label: function () {
             return this.name || 'unipi input';
         },
-        oneditprepare: function() {
+        oneditprepare: function () {
+            var config = this;
+            var outputs = $('#node-input-outputs');
+            var unipi = $('#node-input-unipi');
+            var input = $('#node-input-input');
+            var circuit = $('#node-input-circuit');
+            var button = $('#node-input-button');
 
+            unipi.on('change', fetchInputs);
+            input.on('change', function (e) {
+                optionUpdate(e);
+                fetchInputs();
+            });
+            button.on('change', function () {
+                var container = $('#hold-container');
+
+                if (button.is(':checked')) {
+                    outputs.val('2');
+                    container.show();
+                } else {
+                    outputs.val('1');
+                    container.hide();
+                }
+            });
+
+            input.val(config.input);
+            button.prop('checked', config.button);
+
+            function optionUpdate(e) {
+                var container = $('#button-container');
+
+                if ($(e.currentTarget).val() === 'input') {
+                    container.show();
+                } else {
+                    container.hide();
+                    outputs.val('1');
+                }
+            }
+
+            function fetchInputs() {
+                circuit.empty().prop('disabled', true);
+
+                var node = RED.nodes.node(unipi.val());
+
+                if (!node) {
+                    output.prop('disabled', true);
+                    return;
+                }
+
+                input.prop('disabled', false);
+                circuit.html('').prop('disabled', true);
+
+                if (!input.val()) {
+                    input.val(defaultInput);
+                }
+
+                $.getJSON('/unipi/inputs', {
+                    unipi: unipi.val(),
+                    input: input.val()
+                })
+                    .done(function (res) {
+                        if (!res.length) {
+                            RED.notify('No inputs of this type available.', 'error');
+                            return;
+                        }
+
+                        circuit
+                            .prop('disabled', false)
+                            .append($('<option></option>'));
+
+                        res.forEach(function (relay) {
+                            var name = relay.circuit;
+
+                            if (relay.alias) {
+                                name += ' - ' + relay.alias.substr(3);
+                            }
+
+                            //TODO: not for analogue!
+                            name += ' (' + relay.debounce + 'ms debounce)';
+
+                            circuit.append(
+                                $('<option></option>')
+                                    .attr('value', relay.circuit)
+                                    .text(name)
+                            );
+
+                            circuit.val(config.circuit)
+                        });
+                    })
+                    .fail(function () {
+                        RED.notify('Failed to fetch available inputs. Please try again.', 'error');
+                    });
+            }
         }
     });
 </script>
 
 <script type="text/x-red" data-template-name="unipi-input">
+    <input type="hidden" id="node-input-outputs" value="1">
+
     <div class="form-row">
         <label for="node-input-unipi"><i class="fa fa-globe"></i> UniPi</label>
         <input type="text" id="node-input-unipi">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-input"><i class="fa fa-filter"></i> Type</label>
+        <select id="node-input-input" style="width: 70%">
+            <option value="input">Digital</option>
+            <option value="analogueInput">Analogue</option>
+            <option value="1wire">1-Wire</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-circuit"><i class="fa fa-tasks"></i> Input</label>
+        <select id="node-input-circuit" style="width: 70%" disabled></select>
+    </div>
+
+    <div id="button-container">
+        <div class="form-row">
+            <label for="node-input-button"><i class="fa fa-hand-pointer-o"></i> Button</label>
+            <input type="checkbox" id="node-input-button" value="1">
+        </div>
+
+        <div class="form-row" id="hold-container">
+            <label for="node-input-hold"><i class="fa fa-clock"></i> Hold Time</label>
+            <input type="number" id="node-input-hold" placeholder="Time in ms" value="500">
+        </div>
     </div>
 
     <div class="form-row">
@@ -40,6 +180,7 @@
             TODO
         </span>
     </div>
+
 </script>
 
 <script type="text/x-red" data-help-name="unpi-input">
