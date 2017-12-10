@@ -6,7 +6,7 @@ Node-RED node for utilising the UniPi EVOK API via WebSockets.
 
 ## Notes
 
-The underlying library for communicating with the UniPi can be found here: https://raw.githubusercontent.com/phillipsnick/unipi-evok
+The underlying library for communicating with the UniPi can be found here: https://github.com/phillipsnick/unipi-evok
 
 __This is currently a work in progress.__
 
