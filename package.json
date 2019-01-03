@@ -31,6 +31,6 @@
   },
   "homepage": "https://github.com/phillipsnick/node-red-contrib-unipi-evok#readme",
   "dependencies": {
-    "unipi-evok": "0.1.0"
+    "unipi-evok": ""
   }
 }
